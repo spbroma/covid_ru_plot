@@ -1,0 +1,6 @@
+data.csv
+*.html
+.venv
+.vscode
+.idea
+__pycache__
