@@ -4,7 +4,8 @@ import plotly.graph_objects as go
 from get_data import get_data
 from datetime import datetime
 
-data = get_data()
+align_value = 20
+data = get_data(align_value)
 print('Data is loaded')
 
 dateArr = data.date
@@ -16,6 +17,8 @@ labelArr = data.label
 doubleEveryN = data.double_plot.value
 doubleEveryNLabel = data.double_plot.label
 maxLenValArrAlign = data.max_len
+newCasesAlignArr = data.new_cases_align
+newCasesArr = data.new_cases
 
 
 # Base plotly
@@ -41,21 +44,34 @@ datestr = datetime.strftime(datetime.now(), '%d.%m.%Y, %H:%M')
 # def click_handler(trace, points, selector):
 #     print(trace)
 
+dateArrShort = []
+for d in dateArr:
+    dateArrShort.append(d[:-3])
+dateArrShort = np.array(dateArrShort)
+
 # Relative value
+n_first = 10
 colors = px.colors.qualitative.G10
-for i in range(valArr.shape[0]):
-    s = go.Scatter(y=valArr[i],
+for i in range(valArrAlign.shape[0]):
+    if i < n_first:
+        visible = None
+    else:
+        visible = 'legendonly'
+
+    s = go.Scatter(y=newCasesArr[i],
                    x=dateArr,
                     mode='lines+markers+text',
                     name=labelArr[i],
-                    text=labelAnnotationAllArr[i],
+                    text=labelAnnotationAllArr[i][1:],
                     textposition="middle right",
                     # hovertext=str(valArrAlign[i]) + ', ' + labelArr[i],
                     hovertemplate='%{y}, ' + labelArr[i],
                     marker=dict(color=colors[i%len(colors)], size=7),
                     line=dict(color=colors[i%len(colors)], width=2),
+                    visible=visible,
                     # showlegend=False
                              )
+
     # s.on_click(click_handler)
     fig.add_trace(s)
 
@@ -67,10 +83,10 @@ for i in range(valArr.shape[0]):
 #                     mode='lines+markers',
 #                     name=labelArr[i]))
 
-fig.update_yaxes(type="linear", title_text='Число заболевших')
-# fig.update_xaxes(title_text='Количество дней с момента регистрации 10 заболевших')
+fig.update_yaxes(type="linear", title_text='Число новых случаев')
+# fig.update_xaxes(title_text='Количество дней с момента регистрации ' + str(align_value) + ' заболевших')
 
-fig.update_layout(title='График роста зараженных COVID-19 по регионам РФ на ' + dateArr[-1])
+fig.update_layout(title='График новых случаев COVID-19 по регионам РФ на ' + dateArr[-1])
 
 # fig.add_annotation(
 #             x=10,
@@ -86,14 +102,14 @@ fig.update_layout(
     # width=1500,
     # height=700,
     xaxis=dict(
-        range=[0, np.ceil((valArr.shape[1]+3)/5)*5],
+        range=[0, np.ceil((newCasesArr.shape[1]+3)/5)*5],
         # fixedrange=True
     ),
 
-    yaxis=dict(
-        # range=[1, 4.5],
-        # fixedrange=True
-    ),
+    # yaxis=dict(
+    #     range=[np.log10(align_value), np.log10(valArr.max()) * 1.1],
+    #     # fixedrange=True
+    # ),
 
     updatemenus=[
         dict(
@@ -101,13 +117,13 @@ fig.update_layout(
             direction="left",
             buttons=list([
                 dict(
-                    args=["yaxis.type", "linear"],
-                    label="линейный",
+                    args=["yaxis.type", "log"],
+                    label="логарифмический",
                     method="relayout"
                 ),
                 dict(
-                    args=["yaxis.type", "log"],
-                    label="логарифмический",
+                    args=["yaxis.type", "linear"],
+                    label="линейный",
                     method="relayout"
                 ),
             ]),
@@ -146,7 +162,7 @@ fig.update_layout(
 
 print('Plotting done')
 
-fig.write_html('covid_days.html', auto_open=True)
+fig.write_html('covid_new.html', auto_open=True)
 
 # Plotly Express
 

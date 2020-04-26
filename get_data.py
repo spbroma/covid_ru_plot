@@ -10,6 +10,7 @@ def get_data(align_value=20):
     load_csv()
     dfIn = pd.read_csv('data.csv')
     dfDensity = pd.read_csv('data/density.csv')
+    # dfIn['Density'] =
     dfIn = dfIn.sort_values(by=dfIn.columns[-1], ascending=False, ignore_index=True)
     # dfIn = pd.read_csv('covid_data.csv')
 
@@ -17,12 +18,14 @@ def get_data(align_value=20):
 
     for i in range(dfIn.shape[1]-4):
         dateIn = dfIn.axes[1][i+4]
-        dateOut = datetime.strptime(dateIn, '%m/%d/%y').strftime('%d %b')
+        dateOut = datetime.strptime(dateIn, '%m/%d/%y').strftime('%d.%m.%y')
         dateArr.append(dateOut)
         # print(dateOut)
 
 
     valArr = []
+    newCasesArr = []
+    newCasesAlignArr = []
     valArrAlign = []
     labelArr = []
     maxLenValArrAlign = 0
@@ -35,11 +38,22 @@ def get_data(align_value=20):
         valArr.append(val)
         labelArr.append(label)
 
-        valAlign = []
 
-        for v in val:
+
+        valAlign = []
+        newCases = [0]
+        newCasesAlign = [0]
+
+        for i in range(len(val)):
+            v = val[i]
+            if i > 1:
+                newCases.append(val[i] - val[i-1])
+
             if v >= align_value:
                 valAlign.append(v)
+                if len(valAlign) > 1:
+                    newCasesAlign.append(v - valAlign[-2])
+
         if len(valAlign) > maxLenValArrAlign:
             maxLenValArrAlign = len(valAlign)
 
@@ -54,6 +68,8 @@ def get_data(align_value=20):
         valArrAlign.append(valAlign)
         labelAnnotationArr.append(labelAnnotation)
         labelAnnotationAllArr.append(labelAnnotationAll)
+        newCasesArr.append(newCases)
+        newCasesAlignArr.append(newCasesAlign)
 
     doubleEvery1 = []
     doubleEvery2 = []
@@ -83,6 +99,8 @@ def get_data(align_value=20):
     valArr = np.array(valArr)
     valArrAlign = np.array(valArrAlign)
     labelArr = np.array(labelArr)
+    newCasesArr = np.array(newCasesArr)
+    newCasesAlignArr = np.array(newCasesAlignArr)
 
     output = Munch()
     output.date = dateArr
@@ -95,6 +113,9 @@ def get_data(align_value=20):
     output.double_plot.value = doubleEveryN
     output.double_plot.label = doubleEveryNLabel
     output.max_len = maxLenValArrAlign
+    output.new_cases = newCasesArr
+    output.new_cases_align = newCasesAlignArr
+
 
     # output1 = dict(
     #     date=dateArr,

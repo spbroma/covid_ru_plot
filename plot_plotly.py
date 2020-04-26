@@ -76,7 +76,7 @@ for i in range(valArrAlign.shape[0]):
 fig.update_yaxes(type="log", title_text='Число заболевших')
 fig.update_xaxes(title_text='Количество дней с момента регистрации ' + str(align_value) + ' заболевших')
 
-fig.update_layout(title='График роста зараженных COVID-19 по регионам РФ (обновлено ' + datestr + ')')
+fig.update_layout(title='График роста зараженных COVID-19 по регионам РФ на ' + dateArr[-1])
 
 # fig.add_annotation(
 #             x=10,
