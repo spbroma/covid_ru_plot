@@ -14,6 +14,6 @@ cp covid_new.html $page_path_3/covid.html
 
 cd $page_path_1/..
 
-git add . && git commit -m 'upd' && git pull && git push
+git add . && git commit -m 'upd' && git pull -q && git push
 
 # read -p 'Press any key to continue...' tmpvar
