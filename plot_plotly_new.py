@@ -62,7 +62,7 @@ for i in range(valArrAlign.shape[0]):
                    x=dateArr,
                     mode='lines+markers+text',
                     name=labelArr[i],
-                    text=labelAnnotationAllArr[i][1:],
+                    text=labelAnnotationAllArr[i],
                     textposition="middle right",
                     # hovertext=str(valArrAlign[i]) + ', ' + labelArr[i],
                     hovertemplate='%{y}, ' + labelArr[i],
