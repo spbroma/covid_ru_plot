@@ -10,6 +10,31 @@ def get_data(align_value=20):
     load_csv()
     dfIn = pd.read_csv('data.csv')
     dfDensity = pd.read_csv('data/density.csv')
+
+    sumMskDf = dfIn.loc[29] + dfIn.loc[30]
+    sumSpbDf = dfIn.loc[63] + dfIn.loc[26]
+
+    for i in range(dfIn.shape[0]-1):
+        if i == 0:
+            sumAllDf = dfIn.loc[i]
+        else:
+            sumAllDf += dfIn.loc[i]
+
+    sumAllDf = pd.Series(sumAllDf)
+    sumMskDf = pd.Series(sumMskDf)
+    sumSpbDf = pd.Series(sumSpbDf)
+
+    sumAllDf['Province/State'] = 'Сумма по регионам'
+    sumAllDf['Country/Region'] = 'Сумма по регионам'
+    sumMskDf['Province/State'] = 'Москва + область'
+    sumMskDf['Country/Region'] = 'Москва + область'
+    sumSpbDf['Province/State'] = 'СПб + область'
+    sumSpbDf['Country/Region'] = 'СПб + область'
+
+    dfIn = dfIn.append(sumAllDf, ignore_index=True)
+    dfIn = dfIn.append(sumMskDf, ignore_index=True)
+    dfIn = dfIn.append(sumSpbDf, ignore_index=True)
+
     # dfIn['Density'] =
     dfIn = dfIn.sort_values(by=dfIn.columns[-1], ascending=False, ignore_index=True)
     # dfIn = pd.read_csv('covid_data.csv')
@@ -22,7 +47,6 @@ def get_data(align_value=20):
         dateArr.append(dateOut)
         # print(dateOut)
 
-
     valArr = []
     newCasesArr = []
     newCasesAlignArr = []
@@ -32,17 +56,16 @@ def get_data(align_value=20):
     labelAnnotationArr = []
     labelAnnotationAllArr = []
 
+
     for i in range(dfIn.shape[0]-4):
         val = dfIn.loc[i][4:].to_list()
         label = dfIn.loc[i][1]
         valArr.append(val)
         labelArr.append(label)
 
-
-
         valAlign = []
-        newCases = [0]
-        newCasesAlign = [0]
+        newCases = [0, 0]
+        newCasesAlign = [0, 0]
 
         for i in range(len(val)):
             v = val[i]

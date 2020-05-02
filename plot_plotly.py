@@ -4,7 +4,7 @@ import plotly.graph_objects as go
 from get_data import get_data
 from datetime import datetime
 
-align_value = 20
+align_value = 100
 data = get_data(align_value)
 print('Data is loaded')
 
